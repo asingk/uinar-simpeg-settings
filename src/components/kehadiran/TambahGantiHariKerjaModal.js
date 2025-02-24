@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import PropTypes from 'prop-types'
 import axios from 'axios'
 import dayjs from 'dayjs'
@@ -14,12 +14,15 @@ import {
   CModalTitle,
   CSpinner,
 } from '@coreui/react-pro'
+import { KeycloakContext } from 'src/context'
 
 const TambahHariKerjaModal = (props) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
   const [errorMessage, setErrorMessage] = useState()
   const [tanggal, settanggal] = useState('')
+
+  const keycloak = useContext(KeycloakContext)
 
   let modalBody = (
     <CForm>
@@ -53,11 +56,13 @@ const TambahHariKerjaModal = (props) => {
 
     try {
       await axios.post(
-        import.meta.env.VITE_KEHADIRAN_API_URL + '/hari-libur-tapi-kerja',
-        'tanggal=' + dayjs(tanggal).format('YYYY-MM-DD'),
+        `${import.meta.env.VITE_SIMPEG_REST_URL}/hari-libur-tapi-kerja`,
+        {
+          tanggal: dayjs(tanggal).format('YYYY-MM-DD'),
+        },
         {
           headers: {
-            apikey: import.meta.env.VITE_API_KEY,
+            Authorization: `Bearer ${keycloak.token}`,
           },
         },
       )
@@ -75,8 +80,9 @@ const TambahHariKerjaModal = (props) => {
         // Anything else
         setError(true)
       }
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   return (

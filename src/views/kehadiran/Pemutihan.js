@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
 
 import { cilDelete, cilPlus } from '@coreui/icons'
@@ -9,6 +9,7 @@ import { CAlert, CButton, CCol, CSpinner, CTable } from '@coreui/react-pro'
 import SelectBulanTahun from '../../components/kehadiran/SelectBulanTahun'
 import dayjs from 'dayjs'
 import TambahPemutihanModal from 'src/components/kehadiran/TambahPemutihanModal'
+import { KeycloakContext } from 'src/context'
 
 const Pemutihan = () => {
   console.debug('rendering... Pemutihan')
@@ -25,6 +26,8 @@ const Pemutihan = () => {
   const [status, setStatus] = useState()
   const [toggle, setToggle] = useState(false)
 
+  const keycloak = useContext(KeycloakContext)
+
   useEffect(() => {
     const date = new Date()
     setTahun(date.getFullYear())
@@ -35,16 +38,22 @@ const Pemutihan = () => {
     setLoading(true)
     if (tahun && bulan) {
       axios
-        .get(
-          import.meta.env.VITE_KEHADIRAN_API_URL + '/pemutihan?tahun=' + tahun + '&bulan=' + bulan,
-        )
+        .get(`${import.meta.env.VITE_SIMPEG_REST_URL}/pemutihan`, {
+          params: {
+            tahun,
+            bulan,
+          },
+          headers: {
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+        })
         .then((response) => {
-          setData(response.data)
+          setData(response.data.pemutihan)
         })
         .catch((error) => {
           setError(error)
         })
-        .then(() => {
+        .finally(() => {
           setLoading(false)
         })
     }

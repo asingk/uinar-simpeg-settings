@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
 import CIcon from '@coreui/icons-react'
 import { cilDelete, cilPencil, cilPlus } from '@coreui/icons'
@@ -7,6 +7,7 @@ import TambahHijriahModal from '../../components/kehadiran/TambahHijriahModal'
 import UbahHijriahModal from '../../components/kehadiran/UbahHijriahModal'
 import HapusHijriahModal from '../../components/kehadiran/HapusHijriahModal'
 import dayjs from 'dayjs'
+import { KeycloakContext } from 'src/context'
 
 const Hijriah = () => {
   console.debug('rendering... Hijriah')
@@ -23,16 +24,22 @@ const Hijriah = () => {
   const [awalRamadhan, setAwalRamadhan] = useState()
   const [awalSyawal, setAwalSyawal] = useState()
 
+  const keycloak = useContext(KeycloakContext)
+
   useEffect(() => {
     axios
-      .get(import.meta.env.VITE_KEHADIRAN_API_URL + '/hijriah')
+      .get(`${import.meta.env.VITE_SIMPEG_REST_URL}/hijriah`, {
+        headers: {
+          Authorization: `Bearer ${keycloak.token}`,
+        },
+      })
       .then((response) => {
-        setData(response.data)
+        setData(response.data.hijriah)
       })
       .catch((error) => {
         setError(error)
       })
-      .then(() => {
+      .finally(() => {
         setLoading(false)
       })
   }, [toggle])

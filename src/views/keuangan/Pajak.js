@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { CAlert, CButton, CSpinner, CTable } from '@coreui/react-pro'
 import CIcon from '@coreui/icons-react'
 import { cilPencil } from '@coreui/icons'
 import axios from 'axios'
 import EditPajakModal from 'src/components/keuangan/EditPajakModal'
+import { KeycloakContext } from 'src/context'
 
 const Pajak = () => {
   console.debug('rendering... Pajak')
@@ -16,11 +17,17 @@ const Pajak = () => {
   const [isEdit, setIsEdit] = useState(false)
   const [persen, setPersen] = useState(0)
 
+  const keycloak = useContext(KeycloakContext)
+
   useEffect(() => {
     axios
-      .get(import.meta.env.VITE_KEHADIRAN_API_URL + '/pajak')
+      .get(`${import.meta.env.VITE_SIMPEG_REST_URL}/pajak`, {
+        headers: {
+          Authorization: `Bearer ${keycloak.token}`,
+        },
+      })
       .then((response) => {
-        setData(response.data)
+        setData(response.data.pajak)
       })
       .catch((error) => {
         setError(error)

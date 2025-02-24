@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import PropTypes from 'prop-types'
 import dayjs from 'dayjs'
 import {
@@ -11,29 +11,32 @@ import {
   CModalTitle,
   CSpinner,
 } from '@coreui/react-pro'
+import axios from 'axios'
+import { KeycloakContext } from 'src/context'
 
 const HapusGantiGariKerjaModal = (props) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
 
+  const keycloak = useContext(KeycloakContext)
+
   const hapusAction = async () => {
     setError(false)
     setLoading(true)
-    const resp = await fetch(
-      import.meta.env.VITE_KEHADIRAN_API_URL + '/hari-libur-tapi-kerja/' + props.id,
-      {
-        method: 'DELETE',
-        headers: {
-          apikey: import.meta.env.VITE_API_KEY,
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_SIMPEG_REST_URL}/hari-libur-tapi-kerja/${props.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${keycloak.token}`,
+          },
         },
-      },
-    )
-    if (resp.ok) {
-      setLoading(false)
+      )
       props.deleted()
-    } else {
-      setLoading(false)
+    } catch (e) {
       setError(true)
+    } finally {
+      setLoading(false)
     }
   }
 

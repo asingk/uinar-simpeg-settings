@@ -54,15 +54,14 @@ const EditUangMakanModal = (props) => {
     try {
       setLoading(true)
       await axios.put(
-        import.meta.env.VITE_KEHADIRAN_API_URL + '/uang-makan/' + props.id,
+        `${import.meta.env.VITE_SIMPEG_REST_URL}/uang-makan/${props.id}`,
         {
           jumlah: props.jumlah,
-          admin: loginId,
+          updatedBy: loginId,
         },
         {
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            apikey: import.meta.env.VITE_API_KEY,
+            Authorization: `Bearer ${keycloak.token}`,
           },
         },
       )

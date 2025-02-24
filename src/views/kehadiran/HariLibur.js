@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import CIcon from '@coreui/icons-react'
 import { cilDelete, cilPlus } from '@coreui/icons'
 import {
@@ -13,6 +13,8 @@ import {
 import SelectTahun from '../../components/kehadiran/SelectTahun'
 import TambahHariLiburModal from '../../components/kehadiran/TambahHariLiburModal'
 import HapusHariLiburModal from '../../components/kehadiran/HapusHariLiburModal'
+import axios from 'axios'
+import { KeycloakContext } from 'src/context'
 
 const HariLibur = () => {
   console.debug('rendering... HariLibur')
@@ -41,6 +43,8 @@ const HariLibur = () => {
   const [toggle, setToggle] = useState(false)
   const [isOpenHapusModal, setIsOpenHapusModal] = useState(false)
 
+  const keycloak = useContext(KeycloakContext)
+
   useEffect(() => {
     setTahun(new Date().getFullYear())
   }, [])
@@ -48,65 +52,71 @@ const HariLibur = () => {
   useEffect(() => {
     setLoading(true)
     if (tahun) {
-      fetch(import.meta.env.VITE_KEHADIRAN_API_URL + '/hari-libur?tahun=' + tahun)
-        .then((response) => response.json())
-        .then(
-          (data) => {
-            setLoading(false)
-            const jan = data.filter((row) => {
-              return row.tanggal.split('-')[1] === '01'
-            })
-            setJanuari(jan)
-            const feb = data.filter((row) => {
-              return row.tanggal.split('-')[1] === '02'
-            })
-            setFebruari(feb)
-            const mar = data.filter((row) => {
-              return row.tanggal.split('-')[1] === '03'
-            })
-            setMaret(mar)
-            const apr = data.filter((row) => {
-              return row.tanggal.split('-')[1] === '04'
-            })
-            setApril(apr)
-            const mei = data.filter((row) => {
-              return row.tanggal.split('-')[1] === '05'
-            })
-            setMei(mei)
-            const jun = data.filter((row) => {
-              return row.tanggal.split('-')[1] === '06'
-            })
-            setJuni(jun)
-            const jul = data.filter((row) => {
-              return row.tanggal.split('-')[1] === '07'
-            })
-            setJuli(jul)
-            const agu = data.filter((row) => {
-              return row.tanggal.split('-')[1] === '08'
-            })
-            setAgustus(agu)
-            const sep = data.filter((row) => {
-              return row.tanggal.split('-')[1] === '09'
-            })
-            setSeptember(sep)
-            const okt = data.filter((row) => {
-              return row.tanggal.split('-')[1] === '10'
-            })
-            setOktober(okt)
-            const nov = data.filter((row) => {
-              return row.tanggal.split('-')[1] === '11'
-            })
-            setNovember(nov)
-            const des = data.filter((row) => {
-              return row.tanggal.split('-')[1] === '12'
-            })
-            setDesember(des)
+      axios
+        .get(`${import.meta.env.VITE_SIMPEG_REST_URL}/hari-libur`, {
+          params: {
+            tahun,
           },
-          (error) => {
-            setLoading(false)
-            setError(error)
+          headers: {
+            Authorization: `Bearer ${keycloak.token}`,
           },
-        )
+        })
+        .then((response) => {
+          const jan = response.data.hariLibur.filter((row) => {
+            return row.tanggal.split('-')[1] === '01'
+          })
+          setJanuari(jan)
+          const feb = response.data.hariLibur.filter((row) => {
+            return row.tanggal.split('-')[1] === '02'
+          })
+          setFebruari(feb)
+          const mar = response.data.hariLibur.filter((row) => {
+            return row.tanggal.split('-')[1] === '03'
+          })
+          setMaret(mar)
+          const apr = response.data.hariLibur.filter((row) => {
+            return row.tanggal.split('-')[1] === '04'
+          })
+          setApril(apr)
+          const mei = response.data.hariLibur.filter((row) => {
+            return row.tanggal.split('-')[1] === '05'
+          })
+          setMei(mei)
+          const jun = response.data.hariLibur.filter((row) => {
+            return row.tanggal.split('-')[1] === '06'
+          })
+          setJuni(jun)
+          const jul = response.data.hariLibur.filter((row) => {
+            return row.tanggal.split('-')[1] === '07'
+          })
+          setJuli(jul)
+          const agu = response.data.hariLibur.filter((row) => {
+            return row.tanggal.split('-')[1] === '08'
+          })
+          setAgustus(agu)
+          const sep = response.data.hariLibur.filter((row) => {
+            return row.tanggal.split('-')[1] === '09'
+          })
+          setSeptember(sep)
+          const okt = response.data.hariLibur.filter((row) => {
+            return row.tanggal.split('-')[1] === '10'
+          })
+          setOktober(okt)
+          const nov = response.data.hariLibur.filter((row) => {
+            return row.tanggal.split('-')[1] === '11'
+          })
+          setNovember(nov)
+          const des = response.data.hariLibur.filter((row) => {
+            return row.tanggal.split('-')[1] === '12'
+          })
+          setDesember(des)
+        })
+        .catch((error) => {
+          setError(error)
+        })
+        .finally(() => {
+          setLoading(false)
+        })
     }
   }, [tahun, toggle])
 

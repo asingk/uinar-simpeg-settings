@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import axios from 'axios'
 import PropTypes from 'prop-types'
 import {
@@ -12,12 +12,15 @@ import {
   CModalTitle,
   CSpinner,
 } from '@coreui/react-pro'
+import { KeycloakContext } from 'src/context'
 
 const TambahHariLiburModal = (props) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
   const [tanggal, setTanggal] = useState()
   const [errorMessage, setErrorMessage] = useState('')
+
+  const keycloak = useContext(KeycloakContext)
 
   const tambahAction = async () => {
     if (!tanggal) {
@@ -34,11 +37,13 @@ const TambahHariLiburModal = (props) => {
       (tanggal.length > 1 ? tanggal : '0' + tanggal)
     try {
       await axios.post(
-        import.meta.env.VITE_KEHADIRAN_API_URL + '/hari-libur',
-        'tanggal=' + formattedDate,
+        `${import.meta.env.VITE_SIMPEG_REST_URL}/hari-libur`,
+        {
+          tanggal: formattedDate,
+        },
         {
           headers: {
-            apikey: import.meta.env.VITE_API_KEY,
+            Authorization: `Bearer ${keycloak.token}`,
           },
         },
       )

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import PropTypes from 'prop-types'
 import axios from 'axios'
 import dayjs from 'dayjs'
@@ -15,6 +15,7 @@ import {
   CModalTitle,
   CSpinner,
 } from '@coreui/react-pro'
+import { KeycloakContext } from 'src/context'
 
 const TambahHijriahModal = (props) => {
   const [loading, setLoading] = useState(false)
@@ -23,6 +24,8 @@ const TambahHijriahModal = (props) => {
   const [awalRamadhan, setAwalRamadhan] = useState('')
   const [awalSyawal, setAwalSyawal] = useState('')
   const [tahun, setTahun] = useState('')
+
+  const keycloak = useContext(KeycloakContext)
 
   let modalBody = (
     <CForm>
@@ -69,7 +72,7 @@ const TambahHijriahModal = (props) => {
     try {
       setLoading(true)
       await axios.post(
-        import.meta.env.VITE_KEHADIRAN_API_URL + '/hijriah',
+        `${import.meta.env.VITE_SIMPEG_REST_URL}/hijriah`,
         {
           tahun: tahun,
           awalRamadhan: dayjs(awalRamadhan).format('YYYY-MM-DD'),
@@ -77,8 +80,7 @@ const TambahHijriahModal = (props) => {
         },
         {
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            apikey: import.meta.env.VITE_API_KEY,
+            Authorization: `Bearer ${keycloak.token}`,
           },
         },
       )

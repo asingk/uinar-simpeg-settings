@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import PropTypes from 'prop-types'
 import axios from 'axios'
 import dayjs from 'dayjs'
@@ -14,13 +14,16 @@ import {
   CModalTitle,
   CSpinner,
 } from '@coreui/react-pro'
+import { KeycloakContext } from 'src/context'
 
 const UbahHijriahModal = (props) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
   const [errorMessage, setErrorMessage] = useState()
-  const [awalRamadhan, setAwalRamadhan] = useState('')
-  const [awalSyawal, setAwalSyawal] = useState('')
+  const [awalRamadhan, setAwalRamadhan] = useState(props.awalRamadhan)
+  const [awalSyawal, setAwalSyawal] = useState(props.awalSyawal)
+
+  const keycloak = useContext(KeycloakContext)
 
   let modalBody = (
     <CForm>
@@ -40,11 +43,7 @@ const UbahHijriahModal = (props) => {
         onDateChange={(date) => setAwalSyawal(date)}
         portal={false}
       />
-      {errorMessage && (
-        <CAlert show className="w-100" color="danger">
-          errorMessage
-        </CAlert>
-      )}
+      {errorMessage && <CAlert color="danger">errorMessage</CAlert>}
     </CForm>
   )
 
@@ -69,7 +68,7 @@ const UbahHijriahModal = (props) => {
     try {
       setLoading(true)
       await axios.put(
-        import.meta.env.VITE_KEHADIRAN_API_URL + '/hijriah/' + props.id,
+        `${import.meta.env.VITE_SIMPEG_REST_URL}/hijriah/${props.id}`,
         {
           tahun: props.tahun,
           awalRamadhan: dayjs(awalRamadhan).format('YYYY-MM-DD'),
@@ -77,8 +76,7 @@ const UbahHijriahModal = (props) => {
         },
         {
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            apikey: import.meta.env.VITE_API_KEY,
+            Authorization: `Bearer ${keycloak.token}`,
           },
         },
       )

@@ -54,35 +54,32 @@ const EditPajakModal = (props) => {
     try {
       setLoading(true)
       await axios.put(
-        import.meta.env.VITE_KEHADIRAN_API_URL + '/pajak/' + props.id,
+        `${import.meta.env.VITE_SIMPEG_REST_URL}/pajak/${props.id}`,
         {
           persen: props.persen,
-          admin: loginId,
+          updatedBy: loginId,
         },
         {
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            apikey: import.meta.env.VITE_API_KEY,
+            Authorization: `Bearer ${keycloak.token}`,
           },
         },
       )
-      setLoading(false)
       props.done()
     } catch (error) {
       if (error.response) {
         // The client was given an error response (5xx, 4xx)
-        setLoading(false)
         // setErrorResp(true)
         setErrorMessage(error.response.data.message)
       } else if (error.request) {
         // The client never received a response, and the request was never left
-        setLoading(false)
         setError(true)
       } else {
         // Anything else
-        setLoading(false)
         setError(true)
       }
+    } finally {
+      setLoading(false)
     }
   }
 

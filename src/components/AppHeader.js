@@ -59,10 +59,10 @@ const AppHeader = () => {
             </CNavLink>
           </CNavItem>
           <CNavItem>
-            <CNavLink href={import.meta.env.VITE_SISERKOM_URL}>{t('Profile')}</CNavLink>
+            <CNavLink href={import.meta.env.VITE_SIMPEG_URL}>{t('Profile')}</CNavLink>
           </CNavItem>
           <CNavItem>
-            <CNavLink href={import.meta.env.VITE_SISERKOM_URL + '/admin'}>{t('Admin')}</CNavLink>
+            <CNavLink href={import.meta.env.VITE_SIMPEG_URL + '/admin'}>{t('Admin')}</CNavLink>
           </CNavItem>
         </CHeaderNav>
         <CHeaderNav className="d-none d-md-flex ms-auto">

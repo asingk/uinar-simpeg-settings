@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import CIcon from '@coreui/icons-react'
 import { cilDelete, cilPlus } from '@coreui/icons'
 import dayjs from 'dayjs'
@@ -6,6 +6,8 @@ import { CAlert, CButton, CCol, CRow, CSpinner, CTable } from '@coreui/react-pro
 import SelectTahun from '../../components/kehadiran/SelectTahun'
 import HapusgantiHariLiburModal from '../../components/kehadiran/HapusGantiHariLiburModal'
 import TambahGantiHariKerjaModal from 'src/components/kehadiran/TambahGantiHariKerjaModal'
+import axios from 'axios'
+import { KeycloakContext } from 'src/context'
 
 const GantiHariKerja = () => {
   console.debug('rendering... GantiHariKerja')
@@ -23,6 +25,8 @@ const GantiHariKerja = () => {
   const [tanggal, setTanggal] = useState()
   const [errorMessage, setErrorMessage] = useState()
 
+  const keycloak = useContext(KeycloakContext)
+
   useEffect(() => {
     setTahun(new Date().getFullYear())
   }, [])
@@ -32,18 +36,24 @@ const GantiHariKerja = () => {
     setError(false)
     setErrorMessage()
     if (tahun) {
-      fetch(import.meta.env.VITE_KEHADIRAN_API_URL + '/hari-libur-tapi-kerja?tahun=' + tahun)
-        .then((response) => response.json())
-        .then(
-          (data) => {
-            setLoading(false)
-            setData(data)
+      axios
+        .get(`${import.meta.env.VITE_SIMPEG_REST_URL}/hari-libur-tapi-kerja`, {
+          params: {
+            tahun,
           },
-          (error) => {
-            setLoading(false)
-            setError(error)
+          headers: {
+            Authorization: `Bearer ${keycloak.token}`,
           },
-        )
+        })
+        .then((response) => {
+          setData(response.data.hariLiburTapiKerja)
+        })
+        .catch(() => {
+          setError(error)
+        })
+        .finally(() => {
+          setLoading(false)
+        })
     }
   }, [tahun, toggle])
 
@@ -89,7 +99,7 @@ const GantiHariKerja = () => {
             color="danger"
             variant="outline"
             size="sm"
-            onClick={(e) => showHapusModal(row.id, row.tanggal)}
+            onClick={() => showHapusModal(row.id, row.tanggal)}
           >
             <CIcon icon={cilDelete} size="sm" />
           </CButton>

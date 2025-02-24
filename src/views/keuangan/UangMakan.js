@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { CAlert, CButton, CSpinner, CTable } from '@coreui/react-pro'
 import CIcon from '@coreui/icons-react'
 import { cilPencil } from '@coreui/icons'
 import axios from 'axios'
 import EditUangMakanModal from 'src/components/keuangan/EditUangMakanModal'
+import { KeycloakContext } from 'src/context'
 
 const formatter = new Intl.NumberFormat('id-ID', {
   style: 'currency',
@@ -22,11 +23,17 @@ const UangMakan = () => {
   const [jumlah, setJumlah] = useState(0)
   const [golongan, setGolongan] = useState('')
 
+  const keycloak = useContext(KeycloakContext)
+
   useEffect(() => {
     axios
-      .get(import.meta.env.VITE_KEHADIRAN_API_URL + '/uang-makan')
+      .get(`${import.meta.env.VITE_SIMPEG_REST_URL}/uang-makan`, {
+        headers: {
+          Authorization: `Bearer ${keycloak.token}`,
+        },
+      })
       .then((response) => {
-        setData(response.data)
+        setData(response.data?.uangMakan)
       })
       .catch((error) => {
         setError(error)

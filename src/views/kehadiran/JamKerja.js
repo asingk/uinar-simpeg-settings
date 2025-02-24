@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import axios from 'axios'
 import {
   CAlert,
@@ -12,6 +12,7 @@ import {
 } from '@coreui/react-pro'
 import SelectHari from '../../components/kehadiran/SelectHari'
 import SuccessToast from 'src/components/SuccessToast'
+import { KeycloakContext } from 'src/context'
 
 const JamKerja = () => {
   console.debug('rendering... JamKerja')
@@ -32,17 +33,21 @@ const JamKerja = () => {
   const [toast, addToast] = useState()
   const toaster = useRef(null)
 
+  const keycloak = useContext(KeycloakContext)
+
   useEffect(() => {
     if (idHari > 0) {
       setLoading(true)
       axios
-        .get(
-          import.meta.env.VITE_KEHADIRAN_API_URL +
-            '/jam-kerja/search?hari=' +
-            idHari +
-            '&isRamadhan=' +
+        .get(`${import.meta.env.VITE_SIMPEG_REST_URL}/jam-kerja/search`, {
+          params: {
+            hari: idHari,
             isRamadhan,
-        )
+          },
+          headers: {
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+        })
         .then((response) => {
           setJamDatangStart(response.data.jamDatangStart)
           setJamDatangEnd(response.data.jamDatangEnd)
@@ -69,11 +74,10 @@ const JamKerja = () => {
   const exampleToast = <SuccessToast message={'Jam kerja berhasil diubah'} />
 
   const simpanAction = async () => {
-    // setLoading(true)
-    const hari = idHari === 1 ? 'senin-kamis' : 'jumat'
+    const hari = idHari === 1 ? [1, 2, 3, 4, 6, 7] : [5]
     try {
-      await axios.put(
-        import.meta.env.VITE_KEHADIRAN_API_URL + '/jam-kerja/' + hari,
+      await axios.post(
+        `${import.meta.env.VITE_SIMPEG_REST_URL}/jam-kerja`,
         {
           jamDatangStart: jamDatangStart,
           jamDatangEnd: jamDatangEnd,
@@ -83,20 +87,19 @@ const JamKerja = () => {
           jamLemburEnd: jamLemburEnd,
           jamDatangBatas: jamDatangBatas,
           jamPulangBatas: jamPulangBatas,
-          isRamadhan: isRamadhan,
+          isRamadhan,
+          hari,
         },
         {
           headers: {
-            apikey: import.meta.env.VITE_API_KEY,
+            Authorization: `Bearer ${keycloak.token}`,
           },
         },
       )
       addToast(exampleToast)
-      // toaster.current.focus()
     } catch (error) {
       if (error.response) {
         // The client was given an error response (5xx, 4xx)
-        // setErrorResp(true)
         setErrorMessage(error.response.data.message)
       } else if (error.request) {
         // The client never received a response, and the request was never left

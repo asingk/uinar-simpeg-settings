@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import axios from 'axios'
 import PropTypes from 'prop-types'
 import {
@@ -14,6 +14,7 @@ import {
   CSpinner,
 } from '@coreui/react-pro'
 import { namaBulan } from 'src/utils'
+import { KeycloakContext } from 'src/context'
 
 const TambahPemutihanModal = (props) => {
   const [loading, setLoading] = useState(false)
@@ -21,6 +22,8 @@ const TambahPemutihanModal = (props) => {
   const [tanggal, setTanggal] = useState()
   const [errorMessage, setErrorMessage] = useState('')
   const [status, setStatus] = useState()
+
+  const keycloak = useContext(KeycloakContext)
 
   const tambahAction = async (event) => {
     event.preventDefault()
@@ -38,14 +41,14 @@ const TambahPemutihanModal = (props) => {
       (tanggal > 9 ? tanggal : '0' + tanggal)
     try {
       await axios.post(
-        import.meta.env.VITE_KEHADIRAN_API_URL + '/pemutihan',
+        `${import.meta.env.VITE_SIMPEG_REST_URL}/pemutihan`,
         {
           tanggal: formattedDate,
           status: status,
         },
         {
           headers: {
-            apikey: import.meta.env.VITE_API_KEY,
+            Authorization: `Bearer ${keycloak.token}`,
           },
         },
       )
