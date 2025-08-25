@@ -121,11 +121,7 @@ const JamKerja = () => {
       </div>
     )
   } else if (error) {
-    body = (
-      <CAlert show className="w-100" color="danger">
-        Error: {error}
-      </CAlert>
-    )
+    body = <CAlert color="danger">Error: {error}</CAlert>
   } else {
     body = (
       <>

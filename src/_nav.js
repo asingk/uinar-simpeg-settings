@@ -71,6 +71,16 @@ const _nav = [
         name: 'Hijriah',
         to: '/kehadiran/hijriah',
       },
+      {
+        component: CNavItem,
+        name: 'WFA - Hari',
+        to: '/kehadiran/wfa-hari',
+      },
+      {
+        component: CNavItem,
+        name: 'WFA - Tanggal',
+        to: '/kehadiran/wfa-tanggal',
+      },
     ],
   },
   {

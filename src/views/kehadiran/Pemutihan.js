@@ -152,7 +152,7 @@ const Pemutihan = () => {
 
   return (
     <div className="mb-4">
-      <h1 className="text-center mb-3">Melihat Daftar Pemutihan</h1>
+      <h1 className="text-center mb-3">Pemutihan</h1>
       <div className="row justify-content-md-center mb-3">
         <CCol lg={3}>
           <SelectBulanTahun setSelect={(bulan, tahun) => onChangeBulan(bulan, tahun)} />

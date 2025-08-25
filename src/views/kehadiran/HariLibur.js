@@ -571,6 +571,7 @@ const HariLibur = () => {
 
   return (
     <>
+      <h1 className="text-center">Hari Libur</h1>
       <div className="row justify-content-md-center">
         <CCol lg="2" md="4" className="mb-4">
           <SelectTahun

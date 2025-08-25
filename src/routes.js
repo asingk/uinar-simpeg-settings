@@ -7,6 +7,8 @@ const HariLibur = React.lazy(() => import('./views/kehadiran/HariLibur'))
 const GantiHariKerja = React.lazy(() => import('./views/kehadiran/GantiHariKerja'))
 const Pemutihan = React.lazy(() => import('./views/kehadiran/Pemutihan'))
 const Hijriah = React.lazy(() => import('./views/kehadiran/Hijriah'))
+const WfaHari = React.lazy(() => import('./views/kehadiran/WfaHari'))
+const WfaTanggal = React.lazy(() => import('./views/kehadiran/WfaTanggal'))
 const Jabatan = React.lazy(() => import('./views/jabatan/Jabatan'))
 const LevelJabatan = React.lazy(() => import('./views/jabatan/LevelJabatan'))
 const SubLevelJabatan = React.lazy(() => import('./views/jabatan/SubLevelJabatan'))
@@ -55,6 +57,8 @@ const routes = [
   { path: '/kehadiran/ganti-hari-kerja', name: 'Ganti Hari Kerja', element: GantiHariKerja },
   { path: '/kehadiran/pemutihan', name: 'Pemutihan', element: Pemutihan },
   { path: '/kehadiran/hijriah', name: 'Hijriah', element: Hijriah },
+  { path: '/kehadiran/wfa-hari', name: 'WFA - Hari', element: WfaHari },
+  { path: '/kehadiran/wfa-tanggal', name: 'WFA - Tanggal', element: WfaTanggal },
   {
     path: '/jabatan',
     name: <Translation>{(t) => t('Jabatan')}</Translation>,

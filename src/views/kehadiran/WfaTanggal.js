@@ -4,13 +4,13 @@ import { cilDelete, cilPlus } from '@coreui/icons'
 import dayjs from 'dayjs'
 import { CAlert, CButton, CCol, CRow, CSpinner, CTable } from '@coreui/react-pro'
 import SelectTahun from '../../components/kehadiran/SelectTahun'
-import HapusgantiHariLiburModal from '../../components/kehadiran/HapusGantiHariLiburModal'
-import TambahGantiHariKerjaModal from 'src/components/kehadiran/TambahGantiHariKerjaModal'
 import axios from 'axios'
 import { KeycloakContext } from 'src/context'
+import TambahWfaTanggalModal from 'src/components/kehadiran/TambahWfaTanggalModal'
+import HapusWfaTanggalModal from 'src/components/kehadiran/HapusWfaTanggalModal'
 
-const GantiHariKerja = () => {
-  console.debug('rendering... GantiHariKerja')
+const WfaTanggal = () => {
+  console.debug('rendering... WfaTanggal')
 
   const date = new Date()
 
@@ -37,7 +37,7 @@ const GantiHariKerja = () => {
     setErrorMessage()
     if (tahun) {
       axios
-        .get(`${import.meta.env.VITE_SIMPEG_REST_URL}/hari-libur-tapi-kerja`, {
+        .get(`${import.meta.env.VITE_SIMPEG_REST_URL}/wfa-tanggal`, {
           params: {
             tahun,
           },
@@ -46,7 +46,7 @@ const GantiHariKerja = () => {
           },
         })
         .then((response) => {
-          setData(response.data.hariLiburTapiKerja)
+          setData(response.data.wfaTanggal)
         })
         .catch(() => {
           setError(error)
@@ -132,7 +132,7 @@ const GantiHariKerja = () => {
 
   return (
     <>
-      <h1 className="text-center">Ganti Hari Kerja</h1>
+      <h1 className="text-center">WFA - Tanggal</h1>
       <CRow className="justify-content-md-center">
         <CCol md="2" className="mb-3">
           <SelectTahun
@@ -152,7 +152,7 @@ const GantiHariKerja = () => {
         {errorMessage && <CAlert color="danger">{errorMessage}</CAlert>}
         {table}
         {isOpenHapusModal && (
-          <HapusgantiHariLiburModal
+          <HapusWfaTanggalModal
             id={id}
             visible={isOpenHapusModal}
             setVisible={setIsOpenHapusModal}
@@ -162,7 +162,7 @@ const GantiHariKerja = () => {
           />
         )}
         {isOpenTambahModal && (
-          <TambahGantiHariKerjaModal
+          <TambahWfaTanggalModal
             id={id}
             visible={isOpenTambahModal}
             setVisible={setIsOpenTambahModal}
@@ -176,4 +176,4 @@ const GantiHariKerja = () => {
   )
 }
 
-export default GantiHariKerja
+export default WfaTanggal
