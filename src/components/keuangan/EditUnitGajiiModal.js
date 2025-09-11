@@ -14,8 +14,8 @@ import {
 import { gql, useMutation } from '@apollo/client'
 
 const UPDATE_UNIT_GAJI = gql`
-  mutation UpdateUnitGaji($id: ID!, $nama: String!) {
-    updateUnitGaji(id: $id, nama: $nama) {
+  mutation UpdateUnitGaji($id: ID!, $nama: String!, $kodeAnakSatker: String!) {
+    updateUnitGaji(id: $id, nama: $nama, kodeAnakSatker: $kodeAnakSatker) {
       code
       success
       message
@@ -25,6 +25,7 @@ const UPDATE_UNIT_GAJI = gql`
 
 const EditUnitGajiModal = (props) => {
   const [nama, setNama] = useState(props.nama)
+  const [kodeAnakSatker, setKodeAnakSatker] = useState(props.kodeAnakSatker)
   const [errorMessage, setErrorMessage] = useState('')
   const [simpan, { data, loading, error }] = useMutation(UPDATE_UNIT_GAJI)
 
@@ -33,7 +34,8 @@ const EditUnitGajiModal = (props) => {
       await simpan({
         variables: {
           id: props.id,
-          nama: nama,
+          nama,
+          kodeAnakSatker,
         },
         refetchQueries: ['DaftarUnitGaji'],
         awaitRefetchQueries: true,
@@ -62,6 +64,14 @@ const EditUnitGajiModal = (props) => {
         aria-label="default input unit gaji"
         defaultValue={nama}
         onChange={(e) => setNama(e.target.value)}
+      />
+      <CFormInput
+        className="mb-3"
+        type="text"
+        placeholder="Kode Anak Satker"
+        aria-label="default input kode anak Satker"
+        defaultValue={kodeAnakSatker}
+        onChange={(e) => setKodeAnakSatker(e.target.value)}
       />
       {error && (
         <CAlert className="mt-3" color="danger">
@@ -97,6 +107,7 @@ const EditUnitGajiModal = (props) => {
 EditUnitGajiModal.propTypes = {
   id: PropTypes.string.isRequired,
   nama: PropTypes.string.isRequired,
+  kodeAnakSatker: PropTypes.string.isRequired,
   visible: PropTypes.bool.isRequired,
   setVisible: PropTypes.func,
 }

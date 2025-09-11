@@ -14,8 +14,8 @@ import {
 } from '@coreui/react-pro'
 
 const CREATE_UNIT_GAJI = gql`
-  mutation CreateUnitGaji($id: ID!, $nama: String!) {
-    createUnitGaji(id: $id, nama: $nama) {
+  mutation CreateUnitGaji($id: ID!, $nama: String!, $kodeAnakSatker: String!) {
+    createUnitGaji(id: $id, nama: $nama, kodeAnakSatker: $kodeAnakSatker) {
       code
       message
       success
@@ -26,6 +26,7 @@ const CREATE_UNIT_GAJI = gql`
 const AddUnitGajiModal = (props) => {
   const [id, setId] = useState('')
   const [nama, setNama] = useState('')
+  const [kodeAnakSatker, setKodeAnakSatker] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
 
   const [simpan, { data, loading, error }] = useMutation(CREATE_UNIT_GAJI)
@@ -34,8 +35,9 @@ const AddUnitGajiModal = (props) => {
     try {
       await simpan({
         variables: {
-          nama: nama,
-          id: id,
+          nama,
+          id,
+          kodeAnakSatker,
         },
         refetchQueries: ['DaftarUnitGaji'],
         awaitRefetchQueries: true,
@@ -71,6 +73,14 @@ const AddUnitGajiModal = (props) => {
         aria-label="default input nama unit gaji"
         value={nama}
         onChange={(e) => setNama(e.target.value)}
+        className="mb-3"
+      />
+      <CFormInput
+        type="text"
+        placeholder="Kode Anak Satker"
+        aria-label="default input kode anak satker"
+        value={kodeAnakSatker}
+        onChange={(e) => setKodeAnakSatker(e.target.value)}
         className="mb-3"
       />
       {error && (

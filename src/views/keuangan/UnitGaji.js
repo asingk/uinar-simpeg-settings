@@ -12,6 +12,7 @@ const GET_DAFTAR_UNIT_GAJI = gql`
     daftarUnitGaji {
       id
       nama
+      kodeAnakSatker
     }
   }
 `
@@ -21,15 +22,17 @@ const UnitGaji = () => {
 
   const [id, setId] = useState('')
   const [nama, setNama] = useState('')
+  const [kodeAnakSatker, setKodeAnakSatker] = useState('')
   const [isAdd, setIsAdd] = useState(false)
   const [isEdit, setIsEdit] = useState(false)
   const [isDelete, setIsDelete] = useState(false)
 
   const { data, loading, error } = useQuery(GET_DAFTAR_UNIT_GAJI)
 
-  const editModalAction = (id, nama) => {
+  const editModalAction = (id, nama, kodeAnakSatker) => {
     setId(id)
     setNama(nama)
+    setKodeAnakSatker(kodeAnakSatker)
     setIsEdit(true)
   }
 
@@ -54,6 +57,10 @@ const UnitGaji = () => {
       _props: { scope: 'col' },
     },
     {
+      key: 'kodeAnakSatker',
+      _props: { scope: 'col' },
+    },
+    {
       key: 'aksi',
       label: '',
       _props: { scope: 'col' },
@@ -67,13 +74,14 @@ const UnitGaji = () => {
         no: idx + 1,
         id: row.id,
         nama: row.nama,
+        kodeAnakSatker: row.kodeAnakSatker,
         aksi: (
           <div className="d-grid gap-2 d-md-flex justify-content-md-end">
             <CButton
               color="warning"
               variant="outline"
               size="sm"
-              onClick={() => editModalAction(row.id, row.nama)}
+              onClick={() => editModalAction(row.id, row.nama, row.kodeAnakSatker)}
             >
               <CIcon icon={cilPencil} />
             </CButton>
@@ -116,7 +124,15 @@ const UnitGaji = () => {
       {error && <CAlert color="danger">Error: {error.message}</CAlert>}
       {data && <CTable responsive striped columns={columns} items={items} />}
       {isAdd && <AddUnitGajiModal visible={isAdd} setVisible={setIsAdd} />}
-      {isEdit && <EditUnitGajiModal id={id} nama={nama} visible={isEdit} setVisible={setIsEdit} />}
+      {isEdit && (
+        <EditUnitGajiModal
+          id={id}
+          nama={nama}
+          kodeAnakSatker={kodeAnakSatker}
+          visible={isEdit}
+          setVisible={setIsEdit}
+        />
+      )}
       {isDelete && <DeleteUnitGajiiModal id={id} visible={isDelete} setVisible={setIsDelete} />}
     </>
   )
