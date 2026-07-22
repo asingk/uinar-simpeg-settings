@@ -14,8 +14,8 @@ import {
 } from '@coreui/react-pro'
 
 const CREATE_GRADE_REMUN = gql`
-  mutation CreateGradeRemun($id: ID!, $remun: Int!) {
-    createGradeRemun(id: $id, remun: $remun) {
+  mutation CreateGradeRemun($grade: String!, $p1: Int!, $p2: Int!) {
+    createGradeRemun(grade: $grade, p1: $p1, p2: $p2) {
       code
       success
       message
@@ -24,8 +24,9 @@ const CREATE_GRADE_REMUN = gql`
 `
 
 const AddGradeRemunModal = (props) => {
-  const [id, setId] = useState('')
-  const [remun, setRemun] = useState(null)
+  const [grade, setGrade] = useState('')
+  const [p1, setP1] = useState(null)
+  const [p2, setP2] = useState(null)
   const [errorMessage, setErrorMessage] = useState('')
 
   const [simpan, { data, loading, error }] = useMutation(CREATE_GRADE_REMUN)
@@ -34,8 +35,9 @@ const AddGradeRemunModal = (props) => {
     try {
       await simpan({
         variables: {
-          id: id,
-          remun: remun,
+          grade: grade,
+          p1: p1,
+          p2: p2,
         },
         refetchQueries: ['DaftarGradeRemun'],
         awaitRefetchQueries: true,
@@ -61,16 +63,24 @@ const AddGradeRemunModal = (props) => {
         type="text"
         placeholder="Grade"
         aria-label="default input grade"
-        value={id}
-        onChange={(e) => setId(e.target.value)}
+        value={grade}
+        onChange={(e) => setGrade(e.target.value)}
         className="mb-3"
       />
       <CFormInput
         type="number"
-        placeholder="Remun"
-        aria-label="default input remun"
-        value={remun}
-        onChange={(e) => setRemun(parseInt(e.target.value))}
+        placeholder="P1"
+        aria-label="default input p1"
+        value={p1 ?? ''}
+        onChange={(e) => setP1(e.target.value === '' ? null : parseInt(e.target.value, 10))}
+        className="mb-3"
+      />
+      <CFormInput
+        type="number"
+        placeholder="P2"
+        aria-label="default input p2"
+        value={p2 ?? ''}
+        onChange={(e) => setP2(e.target.value === '' ? null : parseInt(e.target.value, 10))}
       />
       {error && (
         <CAlert className="mt-3" color="danger">

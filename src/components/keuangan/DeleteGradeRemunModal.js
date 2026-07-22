@@ -54,7 +54,7 @@ const DeleteGradeRemunModal = (props) => {
   return (
     <CModal visible={props.visible} onClose={() => props.setVisible(false)}>
       <CModalHeader onClose={() => props.setVisible(false)}>
-        <CModalTitle>Hapus Grade {props.id}</CModalTitle>
+        <CModalTitle>Hapus Grade {props.grade}</CModalTitle>
       </CModalHeader>
       <CModalBody>
         <>
@@ -90,6 +90,7 @@ const DeleteGradeRemunModal = (props) => {
 
 DeleteGradeRemunModal.propTypes = {
   id: PropTypes.string.isRequired,
+  grade: PropTypes.string.isRequired,
   deleted: PropTypes.func,
   visible: PropTypes.bool.isRequired,
   setVisible: PropTypes.func,

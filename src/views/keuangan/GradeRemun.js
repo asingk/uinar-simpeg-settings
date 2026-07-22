@@ -11,7 +11,9 @@ const GET_DAFTAR_GRADE = gql`
   query DaftarGradeRemun {
     daftarGradeRemun {
       id
-      remun
+      grade
+      p1
+      p2
     }
   }
 `
@@ -26,20 +28,25 @@ const GradeRemun = () => {
 
   const [isEdit, setIsEdit] = useState(false)
   const [isAdd, setIsAdd] = useState(false)
+  const [id, setId] = useState()
   const [grade, setGrade] = useState()
-  const [remun, setRemun] = useState()
+  const [p1, setP1] = useState(null)
+  const [p2, setP2] = useState(null)
   const [isDelete, setIsDelete] = useState(false)
 
   const { data, loading, error } = useQuery(GET_DAFTAR_GRADE)
 
-  const editModalAction = (grade, remun) => {
+  const editModalAction = (id, grade, p1, p2) => {
+    setId(id)
     setGrade(grade)
-    setRemun(remun)
+    setP1(p1)
+    setP2(p2)
     setIsEdit(true)
   }
 
-  const deleteModalAction = (id) => {
-    setGrade(id)
+  const deleteModalAction = (id, grade) => {
+    setId(id)
+    setGrade(grade)
     setIsDelete(true)
   }
 
@@ -61,7 +68,11 @@ const GradeRemun = () => {
       _props: { scope: 'col' },
     },
     {
-      key: 'remun',
+      key: 'p1',
+      _props: { scope: 'col' },
+    },
+    {
+      key: 'p2',
       _props: { scope: 'col' },
     },
     {
@@ -73,18 +84,18 @@ const GradeRemun = () => {
 
   let items = []
   if (data?.daftarGradeRemun.length > 0) {
-    data?.daftarGradeRemun.forEach((row, idx) => {
+    data?.daftarGradeRemun.forEach((row) => {
       const item = {
-        // no: idx + 1,
-        grade: row.id,
-        remun: formatter.format(row.remun),
+        grade: row.grade,
+        p1: formatter.format(row.p1 ?? 0),
+        p2: formatter.format(row.p2 ?? 0),
         aksi: (
           <div className="d-grid gap-2 d-md-flex justify-content-md-end">
             <CButton
               color="warning"
               variant="outline"
               size="sm"
-              onClick={(e) => editModalAction(row.id, row.remun)}
+              onClick={() => editModalAction(row.id, row.grade, row.p1, row.p2)}
             >
               <CIcon icon={cilPencil} />
             </CButton>
@@ -93,7 +104,7 @@ const GradeRemun = () => {
               variant="outline"
               size="sm"
               className="me-md-2"
-              onClick={() => deleteModalAction(row.id, row.nama)}
+              onClick={() => deleteModalAction(row.id, row.grade)}
             >
               <CIcon icon={cilDelete} />
             </CButton>
@@ -121,10 +132,19 @@ const GradeRemun = () => {
       </div>
       <CTable responsive striped columns={columns} items={items} />
       {isEdit && (
-        <EditGradeRemunModal visible={isEdit} setVisible={setIsEdit} grade={grade} remun={remun} />
+        <EditGradeRemunModal
+          visible={isEdit}
+          setVisible={setIsEdit}
+          id={id}
+          grade={grade}
+          p1={p1}
+          p2={p2}
+        />
       )}
       {isAdd && <AddGradeRemunModal visible={isAdd} setVisible={setIsAdd} />}
-      {isDelete && <DeleteGradeRemunModal visible={isDelete} setVisible={setIsDelete} id={grade} />}
+      {isDelete && (
+        <DeleteGradeRemunModal visible={isDelete} setVisible={setIsDelete} id={id} grade={grade} />
+      )}
     </>
   )
 }
