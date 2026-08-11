@@ -24,6 +24,7 @@ const TambahPemutihanModal = (props) => {
   const [status, setStatus] = useState()
 
   const keycloak = useContext(KeycloakContext)
+  const loginId = keycloak.idTokenParsed?.preferred_username
 
   const tambahAction = async (event) => {
     event.preventDefault()
@@ -45,6 +46,7 @@ const TambahPemutihanModal = (props) => {
         {
           tanggal: formattedDate,
           status: status,
+          createdBy: loginId,
         },
         {
           headers: {
